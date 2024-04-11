@@ -1,0 +1,22 @@
+{{ block "index" .}}
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link href="../css/index.css" rel="stylesheet" />
+    <script
+      src="https://unpkg.com/htmx.org@1.9.11"
+      integrity="sha384-0gxUXCCR8yv9FM2b+U3FDbsKthCI66oH5IA9fHppQq9DDMHuMauqq1ZHBpJxQ0J0"
+      crossorigin="anonymous"
+    ></script>
+    <title>Document</title>
+  </head>
+  <body>
+    <div id="count">
+      <span>Count {{ .Count}}</span>
+    </div>
+    <button hx-post="/count" hx-target="#count">Count</button>
+  </body>
+</html>
+{{ end }}
