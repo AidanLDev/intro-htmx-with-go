@@ -35,8 +35,31 @@ type Blocks struct {
     Blocks []Block
 }
 
-type Count struct {
-    Count int
+type Contact struct {
+    Name string
+    Email string
+}
+
+type Contacts = []Contact
+
+type Data struct {
+    Contacts Contacts
+}
+
+func newContact(name string, email string) Contact {
+    return Contact{
+        Name: name,
+        Email: email,
+    }
+}
+
+func newData() Data {
+    return Data{
+        Contacts: []Contact{
+            newContact("Jerry Phillip", "JP@gmail.com"),
+            newContact("Aidan Lows", "AL@gmail.com"),
+        },
+    }
 }
 
 func main() {
@@ -44,15 +67,19 @@ func main() {
     e.Renderer = NewTemplates()
     e.Use(middleware.Logger())
 
-    count := Count { Count: 0 }
+    data := newData()
 
     e.GET("/", func(c echo.Context) error {
-        return c.Render(200, "index", count)
+        return c.Render(200, "index", data)
     })
 
-    e.POST("/count", func(c echo.Context) error {
-        count.Count++;
-        return c.String(http.StatusOK, strconv.Itoa(count.Count))
+    e.POST("/contacts", func(c echo.Context) error {
+        name := c.FormValue("name")
+        email := c.FormValue("email")
+
+        data.Contacts = append(data.Contacts, newContact(name, email))
+        
+        return c.Render(200, "index", data)
     })
 
     e.GET("/blocks", func(c echo.Context) error {
