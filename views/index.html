@@ -13,23 +13,39 @@
     <title>Document</title>
   </head>
   <body>
-    {{template "form" .}}
+    {{template "form" .Form}}
     <hr />
-    {{ template "display" . }}
+    {{ template "display" .Data }}
+    <script>
+      document.addEventListener("DOMContentLoaded", event => {
+        document.body.addEventListener("htmx:beforeSwap", function(evt) {
+          if (evt.detail.xhr.status === 422) {
+            evt.detail.shouldSwap = true;
+            evt.detail.isError = false
+          }
+        })
+      })
+    </script>
   </body>
 </html>
 {{ end }} {{ block "form" . }}
-<form hx-post="/contacts">
-  <label>name: </label> <input type="text" name="name" /> <label>email: </label>
-  <input type="text" name="email" />
+<form hx-swap="outerHTML" hx-post="/contacts">
+  <label>name: </label> <input type="text" name="name" {{ if .Values.name }} value="{{ .Values.name }}" {{ end }} /> <label>email: </label>
+  <input type="text" name="email" {{ if .Values.email }} value="{{ .Values.email }}" {{ end }} />
+
+  {{ if .Errors.email }}
+    <div style="color: red"><span>{{ .Errors.email }}</span></div>
+  {{ end }}
   <button type="submit">Create Contact</button>
 </form>
 {{ end }} {{ block "display" . }}
-<div style="display: flex; flex-direction: column">
+<div id="contacts" style="display: flex; flex-direction: column; margin: 2rem">
   {{ range .Contacts }}
+  <div style="margin: 1rem 0;">
   <div>
   <span>Name: </span><span> {{ .Name }}</div> <div></span> <span>Email: </span
   ><span> {{ .Email }} </span></div>
+  </div>
   {{ end }}
 </div>
 {{ end }}
