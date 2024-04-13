@@ -119,10 +119,12 @@ func main() {
             return c.Render(422, "form", formData)
         }
 
-        page.Data.Contacts = append(page.Data.Contacts, newContact(name, email))
-        
-        // TODO: ???
-        return c.Render(200, "display", page)
+        contact := newContact(name, email)
+
+        page.Data.Contacts = append(page.Data.Contacts, contact)
+
+        c.Render(200, "form", newFormData())
+        return c.Render(200, "oob-contact", contact)
     })
 
     e.GET("/blocks", func(c echo.Context) error {
@@ -148,6 +150,11 @@ func main() {
             Blocks: blocks,
         });
     });
+
+
+    e.Static("/css", "css")
+    e.Static("/images", "images")
+    e.Static("/", "fem-htmx-proj")
 
     e.Logger.Fatal(e.Start(":42069"))
 }
