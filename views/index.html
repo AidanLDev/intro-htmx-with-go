@@ -67,8 +67,18 @@
   {{ range .Contacts }} {{ template "contact" .}} {{ end }}
 </div>
 {{ end }} {{ block "contact" . }}
-<div style="margin: 1rem 0; display: flex">
-  <div style="width: 1rem">
+<div
+  class="contact"
+  id="contact-{{ .Id }}"
+  style="margin: 1rem 0; display: flex"
+>
+  <div
+    hx-swap="outerHTML swap:500ms"
+    hx-target="#contact-{{ .Id }}"
+    hx-delete="/contacts/{{ .Id }}"
+    hx-indicator="#ci-{{ .Id }}"
+    style="width: 2rem; cursor: pointer"
+  >
     <img src="../images/delete.svg" />
   </div>
   <div>
@@ -78,6 +88,9 @@
   <div>
     <span>Email: </span>
     <span> {{ .Email }} </span>
+  </div>
+  <div id="ci-{{ .Id }}" class="htmx-indicator">
+    <img src="/images/bars.svg" alt="loading" style="width: 1rem" />
   </div>
 </div>
 {{ end }} {{ block "oob-contact" . }}
